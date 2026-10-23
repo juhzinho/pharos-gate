@@ -1,0 +1,13 @@
+{
+  "name": "pharos-gate",
+  "version": "1.0.0",
+  "description": "Check an action against a spend limit, an allowlist and a time window. Nothing is executed.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "gate": "node tasks/gate/gate.js",
+    "web": "node scripts/dev-server.js",
+    "test": "node --test test/policy.test.js"
+  },
+  "license": "MIT"
+}

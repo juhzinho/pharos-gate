@@ -1,0 +1,8 @@
+{
+  "spendLimit": { "token": "USDC", "max": "100" },
+  "allowlist": [
+    "0x000000000000000000000000000000000000dEaD",
+    "0x15dDce897D76ac39c188AdE4D353711A60395315"
+  ],
+  "timeWindow": { "from": "09:00", "to": "21:00", "timezone": "UTC" }
+}
