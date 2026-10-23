@@ -29,15 +29,17 @@
     h1 { margin: 0; font-family: Fraunces, Georgia, serif; font-weight: 560; font-style: italic; font-size: clamp(48px, 6vw, 80px); line-height: .92; }
     .lead { color: var(--muted); max-width: 38ch; }
     .rules { display: grid; gap: 8px; margin-top: 18px; }
-    .rules span { border: 1px solid var(--line); border-radius: 14px; padding: 8px 12px; color: var(--muted); background: rgba(12,16,32,.45); }
+    .rules span { border: 1px solid var(--line); border-radius: 14px; padding: 8px 12px; color: var(--muted); background: rgba(12,16,32,.45); overflow-wrap: anywhere; }
+    .log-label, .status { margin: 12px 0 0; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+    .status { letter-spacing: 0; text-transform: none; font-size: 14px; color: var(--coral); min-height: 0; }
     .dock { background: rgba(12,16,32,.72); border: 1px solid var(--line); border-radius: 28px; padding: 16px; max-height: calc(100vh - 112px); display: flex; flex-direction: column; overflow: hidden; backdrop-filter: blur(18px); box-shadow: 0 24px 70px rgba(0,0,0,.35); animation: rise .9s .08s cubic-bezier(.16,.8,.2,1) both; }
     .chips { display: flex; gap: 8px; flex-wrap: wrap; }
     .chips button, input, select, button { font: inherit; color: var(--ink); }
-    .chips button { border: 1px solid var(--line); background: rgba(255,255,255,.04); color: var(--muted); border-radius: 999px; padding: 8px 12px; cursor: pointer; }
+    .chips button { border: 1px solid var(--line); background: rgba(255,255,255,.04); color: var(--muted); border-radius: 999px; padding: 8px 12px; cursor: pointer; overflow-wrap: anywhere; text-align: left; }
     label { display: block; margin: 10px 0 4px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
     input, select { width: 100%; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: rgba(8,10,22,.7); }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .log { overflow: auto; display: flex; flex-direction: column; gap: 10px; margin: 12px 0; max-height: min(34vh, 360px); }
+    .log { overflow: auto; display: flex; flex-direction: column; gap: 10px; margin: 8px 0 0; max-height: min(28vh, 280px); }
     .msg { animation: rise .45s cubic-bezier(.16,.8,.2,1) both; }
     .msg b { display: block; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
     .msg.allow b { color: var(--mint); }
@@ -55,7 +57,8 @@
       .lead { margin: 6px 0 0; font-size: 15px; }
       .rules { margin-top: 8px; gap: 4px; }
       .rules span { padding: 5px 10px; font-size: 14px; }
-      .dock { max-height: none; }
+      .dock { order: -1; max-height: none; }
+      .chips { max-height: 22vh; overflow: auto; }
       #stage { opacity: .75; }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -94,6 +97,8 @@
         <input id="at" value="12:00" />
         <div class="row"><button class="btn" id="go" type="submit"></button></div>
       </form>
+      <p class="status" id="status"></p>
+      <p class="log-label" id="logLabel"></p>
       <div class="log" id="log"></div>
     </section>
   </main>

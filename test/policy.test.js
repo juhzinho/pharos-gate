@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { evaluate, loadPolicy, record } from "../lib/policy.js";
+import { demoRequests, filledSentence } from "../public/demo.js";
 
 const policy = loadPolicy();
 const burn = "0x000000000000000000000000000000000000dEaD";
@@ -27,6 +28,54 @@ test("an amount over the limit is denied by the spend rule", () => {
   assert.equal(out.decision, "deny");
   assert.equal(out.rule, "spend limit");
   assert.equal(out.executed, false);
+  assert.equal(out.reason, "500 USDC is over 100.");
+});
+
+test("an unreadable clock is denied and is not rolled forward", () => {
+  const rolled = evaluate(policy, { amount: "10", token: "USDC", to: burn, at: "12:60" }, noon);
+  assert.equal(rolled.decision, "deny");
+  assert.equal(rolled.rule, "time window");
+  assert.equal(rolled.reason, "12:60 is not a UTC time.");
+  assert.equal(rolled.entry.clock, "12:60");
+  assert.equal(rolled.entry.at, null);
+  assert.equal(rolled.executed, false);
+  const day = evaluate(policy, { amount: "10", token: "USDC", to: burn, at: "24:00" }, noon);
+  assert.equal(day.reason, "24:00 is not a UTC time.");
+  assert.equal(day.entry.clock, "24:00");
+});
+
+test("9:00 is the same minute as 09:00 and zero is under the limit", () => {
+  const early = evaluate(policy, { amount: "10", token: "USDC", to: burn, at: "9:00" }, noon);
+  assert.equal(early.decision, "allow");
+  assert.equal(early.entry.clock, "09:00 UTC");
+  const zero = evaluate(policy, { amount: "0", token: "USDC", to: burn, at: "12:00" }, noon);
+  assert.equal(zero.decision, "allow");
+});
+
+test("an unreadable amount is not described as over the limit", () => {
+  for (const amount of ["", "1e2", "-1", "100,5", "100."]) {
+    const out = evaluate(policy, { amount, token: "USDC", to: burn, at: "12:00" }, noon);
+    assert.equal(out.rule, "spend limit");
+    assert.equal(out.executed, false);
+    assert.doesNotMatch(out.reason, /over/);
+  }
+  const empty = evaluate(policy, { amount: "", token: "USDC", to: burn, at: "12:00" }, noon);
+  assert.equal(empty.reason, "empty is not a USDC amount.");
+  assert.equal(empty.entry.action, `— USDC to ${burn}`);
+});
+
+test("the sample wallet is allowlisted and the four demos each hit one result", () => {
+  const sample = "0x15dDce897D76ac39c188AdE4D353711A60395315";
+  assert.equal(evaluate(policy, { amount: "10", token: "USDC", to: sample, at: "12:00" }, noon).decision, "allow");
+  const demos = demoRequests(policy);
+  assert.equal(evaluate(policy, demos.allow, noon).decision, "allow");
+  assert.equal(evaluate(policy, demos.spend, noon).rule, "spend limit");
+  assert.equal(evaluate(policy, demos.list, noon).rule, "allowlist");
+  assert.equal(evaluate(policy, demos.time, noon).rule, "time window");
+  assert.equal(demos.spend.amount, "101");
+  assert.equal(demos.time.at, "08:59");
+  assert.equal(filledSentence(demos.allow, "en"), `10 USDC to ${burn} at 12:00`);
+  assert.equal(filledSentence(demos.spend, "pt"), `101 USDC para ${burn} às 12:00`);
 });
 
 test("an address off the list is denied by the allowlist", () => {
