@@ -44,6 +44,18 @@ test("an unreadable clock is denied and is not rolled forward", () => {
   assert.equal(day.entry.clock, "24:00");
 });
 
+test("a timestamp without a zone is read as UTC", () => {
+  const plain = evaluate(policy, { amount: "10", token: "USDC", to: burn, at: "2026-10-23T12:00:00" }, noon);
+  assert.equal(plain.decision, "allow");
+  assert.equal(plain.entry.clock, "12:00 UTC");
+  const zoned = evaluate(policy, { amount: "10", token: "USDC", to: burn, at: "2026-10-23T12:00:00-03:00" }, noon);
+  assert.equal(zoned.entry.clock, "15:00 UTC");
+  const dateOnly = evaluate(policy, { amount: "10", token: "USDC", to: burn, at: "2026-10-23" }, noon);
+  assert.equal(dateOnly.rule, "time window");
+  assert.equal(dateOnly.reason, "2026-10-23 is not a UTC time.");
+  assert.equal(dateOnly.entry.clock, "2026-10-23");
+});
+
 test("9:00 is the same minute as 09:00 and zero is under the limit", () => {
   const early = evaluate(policy, { amount: "10", token: "USDC", to: burn, at: "9:00" }, noon);
   assert.equal(early.decision, "allow");
