@@ -7,4 +7,5 @@ npm test
 npm run web
 ```
 
+Live page: https://pharos-gate-iota.vercel.app
 Local page: http://localhost:3030
