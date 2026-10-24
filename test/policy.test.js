@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { evaluate, loadPolicy, record } from "../lib/policy.js";
-import { demoRequests, filledSentence } from "../public/demo.js";
+import { buttonLabel, demoRequests, filledSentence } from "../public/demo.js";
 
 const policy = loadPolicy();
 const burn = "0x000000000000000000000000000000000000dEaD";
@@ -88,6 +88,11 @@ test("the sample wallet is allowlisted and the four demos each hit one result", 
   assert.equal(demos.time.at, "08:59");
   assert.equal(filledSentence(demos.allow, "en"), `10 USDC to ${burn} at 12:00`);
   assert.equal(filledSentence(demos.spend, "pt"), `101 USDC para ${burn} às 12:00`);
+  assert.equal(buttonLabel(demos.allow, "allow", "en"), "10 USDC at 12:00");
+  assert.equal(buttonLabel(demos.spend, "spend", "en"), "101 USDC");
+  assert.equal(buttonLabel(demos.list, "list", "en"), "off the list");
+  assert.equal(buttonLabel(demos.time, "time", "en"), "08:59");
+  assert.equal(buttonLabel(demos.list, "list", "pt"), "fora da lista");
 });
 
 test("an address off the list is denied by the allowlist", () => {

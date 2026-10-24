@@ -1,5 +1,5 @@
 import { setMode } from "./scene.js";
-import { demoRequests, filledSentence } from "./demo.js";
+import { buttonLabel, demoRequests } from "./demo.js";
 
 const KEY = "pharos-gate-log";
 const I = {
@@ -75,7 +75,7 @@ function apply() {
   $("logLabel").textContent = t.log;
   $("rules").innerHTML = policy ? ruleLines(policy).map((line) => `<span>${esc(line)}</span>`).join("") : "";
   if (examples) {
-    for (const key of ["allow", "spend", "list", "time"]) $(key).textContent = filledSentence(examples[key], lang);
+    for (const key of ["allow", "spend", "list", "time"]) $(key).textContent = buttonLabel(examples[key], key, lang);
   }
   document.querySelectorAll("[data-lang]").forEach((button) => button.classList.toggle("on", button.dataset.lang === lang));
   paint();

@@ -75,3 +75,10 @@ export function filledSentence(row, lang) {
     ? `${row.amount} ${row.token} para ${row.to} às ${row.at}`
     : `${row.amount} ${row.token} to ${row.to} at ${row.at}`;
 }
+
+export function buttonLabel(row, kind, lang) {
+  if (kind === "list") return lang === "pt" ? "fora da lista" : "off the list";
+  if (kind === "spend") return `${row.amount} ${row.token}`;
+  if (kind === "time") return row.at;
+  return lang === "pt" ? `${row.amount} ${row.token} às ${row.at}` : `${row.amount} ${row.token} at ${row.at}`;
+}
